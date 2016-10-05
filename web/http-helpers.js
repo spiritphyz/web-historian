@@ -38,7 +38,22 @@ exports.serveAssets = function(res, asset, callback) {
         }             
       });
     } else {
-      console.log('file does not exist for asset', asset);
+      // if this is a request for a website
+      if (asset.indexOf('/www') !== -1) {
+        // return loading.html
+        fs.readFile('./web/public/loading.html', function(error, content) {
+          if (error) {
+            callback(res, error, 500);
+          } else {       
+            exports.headers['Content-Type'] = 'text/html';
+            callback(res, content);
+          }             
+        });     
+      // if not
+      } else {
+        // return 404
+        exports.send404(res);
+      }
     }
   });
   
@@ -60,11 +75,15 @@ exports.send404 = function(res) {
 exports.handleGet = function(request, response) {
 
   var filePath = request.url;
-  if (filePath === '/') {
-    filePath = '/index.html';
-  }
+  if (filePath.slice(0, 4) !== '/www') {
+    if (filePath === '/') {
+      filePath = '/index.html';
+    }
 
-  filePath = './web/public' + filePath;
+    filePath = './web/public' + filePath;
+  } else {
+    filePath = './archives/sites/www.airbnb.com.html';
+  }
 
   exports.serveAssets(response, filePath, exports.respond);
   
