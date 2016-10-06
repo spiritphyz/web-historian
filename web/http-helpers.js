@@ -82,7 +82,7 @@ exports.handleGet = function(req, res) {
 
     filePath = archive.paths.siteAssets + filePath;
   } else {
-    filePath = archive.paths.archivedSites + filePath + '.html';
+    filePath = archive.paths.archivedSites + filePath/* + '.html'*/;
   }
 
   exports.serveAssets(res, filePath, exports.respond);
@@ -104,12 +104,6 @@ exports.handlePost = function(req, res) {
       exports.respond(res, website, 302);
     });
   });
-
-  // req.on('end', function() {
-  //   console.log('🔥' + 'body is now ', body);
-  //   body = Buffer.concat(body).toString();
-  //   website = JSON.parse(body).url;
-  // });
 
 };
 
