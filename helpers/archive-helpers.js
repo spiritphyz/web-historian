@@ -42,10 +42,19 @@ exports.isUrlInList = function(target, callback) {
   });
 };
 
-exports.addUrlToList = function() {
+exports.addUrlToList = function(websiteToAdd, callback) {
+  fs.appendFile(exports.paths.list, websiteToAdd, 'utf8', function(error) {
+    if (error) {
+      throw error;
+    }
+    callback();
+  });
 };
 
-exports.isUrlArchived = function() {
+exports.isUrlArchived = function(target, callback) {
+  fs.exists(exports.paths.archivedSites + '/' + target, function(exists) {
+    callback(exists);
+  });
 };
 
 exports.downloadUrls = function() {
@@ -56,8 +65,8 @@ exports.downloadUrls = function() {
   };
 
   http.get(options, function(res) {
-    console.log("Got response: " + res.statusCode);
+    console.log('Got response: ' + res.statusCode);
   }).on('error', function(e) {
-    console.log("Got error: " + e.message);
+    console.log('Got error: ' + e.message);
   });
 };
