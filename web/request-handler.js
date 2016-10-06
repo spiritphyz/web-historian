@@ -19,6 +19,12 @@ var actions = {
 
 
 exports.handleRequest = function(req, res) {
+  // var requestedWebstie = '';
+
+  // req.on('data', function(chunk) {
+  //   requestedWebstie = chunk.toString().
+  // });
+
   var action = actions[req.method];
   action ? action(req, res) : utils.send404(res);
 };
