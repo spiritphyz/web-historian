@@ -72,21 +72,52 @@ exports.send404 = function(res) {
   exports.respond(res, 'Not Found', 404);
 };
 
-exports.handleGet = function(request, response) {
+exports.handleGet = function(req, res) {
 
-  var filePath = request.url;
+  var filePath = req.url;
   if (filePath.slice(0, 4) !== '/www') {
     if (filePath === '/') {
       filePath = '/index.html';
     }
 
-    filePath = './web/public' + filePath;
+    filePath = archive.paths.siteAssets + filePath;
   } else {
-    filePath = './archives/sites/www.airbnb.com.html';
+    filePath = archive.paths.archivedSites + filePath + '.html';
   }
 
-  exports.serveAssets(response, filePath, exports.respond);
+  exports.serveAssets(res, filePath, exports.respond);
   
+};
+
+exports.handlePost = function(req, res) {
+  var website = '';
+
+  var body = '';
+  req.on('data', function(chunk) {
+
+    website = chunk.toString().slice(4) + '\n';
+
+    fs.appendFile(archive.paths.list, website, 'utf8', function(error) {
+      if (error) {
+        throw error;
+      }
+      exports.respond(res, website, 302);
+    });
+  });
+
+  // req.on('end', function() {
+  //   console.log('🔥' + 'body is now ', body);
+  //   body = Buffer.concat(body).toString();
+  //   website = JSON.parse(body).url;
+  // });
 
 };
+
+
+
+
+
+
+
+
 

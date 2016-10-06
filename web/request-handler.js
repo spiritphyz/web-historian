@@ -6,12 +6,14 @@ var fs = require('fs');
 
 var actions = {
   'GET': function(req, res) {
-    console.log('serving a GET request on ' + req.url);
+    console.log('🔥 serving a GET request on ' + req.url);
 
     utils.handleGet(req, res);
   },
   'POST': function(req, res) {
+    console.log('🔥 serving a POST request on' + req.url);
 
+    utils.handlePost(req, res);
   }
 };
 
