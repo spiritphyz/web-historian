@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var http = require('http');
+var https = require('https');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -70,18 +71,47 @@ exports.downloadUrls = function(array) {
     };
 
     var request = http.get(options, function(response) {
-      var body = '';
-      response.on('data', function(chunk) {
-        body += chunk;
-      });
 
-      response.on('end', function() {
-        fs.writeFile(dest, body, function(error) {
-          if (error) {
-            return console.log('file weite error: ', error);
-          }
+      if (response.statusCode === 301) {
+        // do another https request
+        console.log('should do a https request', options.host);
+        https.get('https://' + options.host, function(res) {
+          console.log('started https request');
+          var body = '';
+          res.on('data', function(chunk) {
+            console.log('got some data now on https req', chunk);
+            body += chunk;
+          });
+
+          res.on('end', function() {
+            body = body.toString();
+
+            fs.writeFile(dest, body, function(error) {
+              if (error) {
+                return console.log('file weite error: ', error);
+              }
+            });
+          });  
+
         });
-      });
+
+
+      } else {
+        var body = '';
+        response.on('data', function(chunk) {
+          body += chunk;
+        });
+
+        response.on('end', function() {
+          fs.writeFile(dest, body, function(error) {
+            if (error) {
+              return console.log('file weite error: ', error);
+            }
+          });
+        });
+        
+      }
+
 
     });
 
